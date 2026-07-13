@@ -90,8 +90,8 @@ curl -X POST https://YOUR-WORKER.workers.dev/admin/seed
 
 ## Live URLs
 
-- App: `https://YOUR-WORKER.workers.dev`
-- Repository: `https://github.com/YOUR-USERNAME/flightmate-ai`
+- App: https://flightmate-ai.hatricks2374.workers.dev
+- Repository: https://github.com/therickeyarham/flightmate-ai
 
 ## Requirements Checklist
 
