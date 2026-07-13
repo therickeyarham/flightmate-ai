@@ -1,0 +1,47 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "flightmate-ai",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-03-17",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // ---- Durable Objects: gives our agent per-session persistent memory ----
+  "durable_objects": {
+    "bindings": [
+      { "name": "TRAVEL_AGENT", "class_name": "TravelAgent" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["TravelAgent"] }
+  ],
+
+  // ---- D1: structured storage (users, conversations, reviews, logs) ----
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "flightmate-db",
+      "database_id": "99cdc61f-1e2f-4a7d-999f-c2e4cac10dce"
+    }
+  ],
+
+  // ---- Vectorize: stores knowledge-base embeddings for RAG retrieval ----
+  "vectorize": [
+  { "binding": "VECTORIZE", "index_name": "flightmate-knowledge", "remote": true }
+],
+
+  // ---- Workers AI: used to generate embeddings for RAG (free/cheap) ----
+  "ai": {
+    "binding": "AI"
+  },
+
+  // ---- Static frontend assets ----
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+
+  "vars": {
+    "ACCOUNT_ID": "47cdfbe15f872b3f6cdbb7e3ef8a19cf",
+    "AI_GATEWAY_NAME": "flightmate-gateway"
+  }
+}

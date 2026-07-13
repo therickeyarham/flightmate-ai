@@ -1,0 +1,19 @@
+{
+  "name": "flightmate-ai",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "seed": "wrangler dev --test-scheduled false & sleep 3 && curl -X POST http://127.0.0.1:8787/admin/seed"
+  },
+  "dependencies": {
+    "agents": "^0.0.60"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0",
+    "typescript": "^5.5.0",
+    "@cloudflare/workers-types": "^4.20250101.0"
+  }
+}

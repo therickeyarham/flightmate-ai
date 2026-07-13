@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>FlightMate AI — Reviewer Dashboard</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; background: #0f172a; color: #e2e8f0; }
+  h1 { color: #38bdf8; }
+  .card { border: 1px solid #334155; border-radius: 8px; padding: 16px; margin-bottom: 16px; background: #1e293b; }
+  .label { color: #94a3b8; font-size: 0.85em; text-transform: uppercase; }
+  .content { margin: 8px 0; white-space: pre-wrap; }
+  textarea { width: 100%; min-height: 60px; margin-top: 8px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; padding: 8px; }
+  button { padding: 8px 14px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; margin-right: 8px; margin-top: 8px; }
+  .approve { background: #22c55e; color: #0f172a; }
+  .reject { background: #ef4444; color: white; }
+  .modify { background: #f59e0b; color: #0f172a; }
+  a { color: #38bdf8; }
+</style>
+</head>
+<body>
+  <h1>🧑‍✈️ Reviewer Dashboard</h1>
+  <p><a href="/index.html">← Back to chat</a></p>
+  <div id="reviews">Loading pending reviews...</div>
+
+<script>
+  async function loadReviews() {
+    const res = await fetch('/reviews');
+    const reviews = await res.json();
+    const container = document.getElementById('reviews');
+    container.innerHTML = '';
+
+    if (!reviews.length) {
+      container.innerHTML = '<p>No pending reviews right now.</p>';
+      return;
+    }
+
+    reviews.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="label">User asked</div>
+        <div class="content">${r.user_message}</div>
+        <div class="label">Agent recommendation</div>
+        <div class="content">${r.agent_output}</div>
+        <textarea placeholder="Notes (optional)" data-notes></textarea>
+        <textarea placeholder="Edited version (only used if you click Modify)" data-modified></textarea>
+        <div>
+          <button class="approve" data-decision="approved">Approve</button>
+          <button class="modify" data-decision="modified">Modify &amp; Approve</button>
+          <button class="reject" data-decision="rejected">Reject</button>
+        </div>
+      `;
+      card.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => submitDecision(r.id, btn.dataset.decision, card));
+      });
+      container.appendChild(card);
+    });
+  }
+
+  async function submitDecision(id, decision, card) {
+    const notes = card.querySelector('[data-notes]').value;
+    const modifiedContent = card.querySelector('[data-modified]').value;
+    await fetch(`/reviews/${id}/decision`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ decision, notes, modifiedContent })
+    });
+    loadReviews();
+  }
+
+  loadReviews();
+  setInterval(loadReviews, 5000);
+</script>
+</body>
+</html>
